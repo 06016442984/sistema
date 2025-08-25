@@ -1,0 +1,331 @@
+/* ========================================
+   THEME OVERRIDES (Third-party Libraries)
+   ======================================== */
+
+/* ===== SHADCN/UI OVERRIDES ===== */
+.bg-white {
+  background: var(--glass-bg) !important;
+  backdrop-filter: blur(20px) !important;
+  border: 1px solid var(--glass-border) !important;
+}
+
+.text-gray-900 {
+  color: var(--text-primary) !important;
+}
+
+.text-gray-600 {
+  color: var(--text-secondary) !important;
+}
+
+.text-gray-500 {
+  color: var(--text-muted) !important;
+}
+
+.bg-gray-50 {
+  background: transparent !important;
+}
+
+.bg-gray-100 {
+  background: var(--glass-bg) !important;
+}
+
+.border-gray-200 {
+  border-color: var(--glass-border) !important;
+}
+
+.border-gray-300 {
+  border-color: var(--glass-border) !important;
+}
+
+[data-radix-collection-item] {
+  background: var(--glass-bg) !important;
+  border: 1px solid var(--glass-border) !important;
+  color: var(--text-primary) !important;
+}
+
+.bg-card {
+  background: var(--glass-bg) !important;
+  backdrop-filter: blur(20px) !important;
+  border: 1px solid var(--glass-border) !important;
+}
+
+.text-card-foreground {
+  color: var(--text-primary) !important;
+}
+
+.bg-background {
+  background: transparent !important;
+}
+
+.text-foreground {
+  color: var(--text-primary) !important;
+}
+
+.text-muted-foreground {
+  color: var(--text-secondary) !important;
+}
+
+/* ===== RADIX UI OVERRIDES ===== */
+[data-radix-popper-content-wrapper] {
+  z-index: var(--z-popover) !important;
+}
+
+[data-radix-dialog-overlay] {
+  background: rgba(0, 0, 0, 0.5) !important;
+  backdrop-filter: blur(4px) !important;
+  z-index: var(--z-modal-backdrop) !important;
+}
+
+[data-radix-dialog-content] {
+  background: var(--glass-bg) !important;
+  backdrop-filter: blur(20px) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: var(--radius-lg) !important;
+  box-shadow: var(--shadow-xl) !important;
+  z-index: var(--z-modal) !important;
+}
+
+[data-radix-dropdown-menu-content] {
+  background: var(--glass-bg) !important;
+  backdrop-filter: blur(20px) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-lg) !important;
+  z-index: var(--z-dropdown) !important;
+}
+
+[data-radix-dropdown-menu-item] {
+  color: var(--text-secondary) !important;
+  transition: all var(--transition-fast) !important;
+}
+
+[data-radix-dropdown-menu-item]:hover {
+  background: var(--glass-hover) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-radix-tooltip-content] {
+  background: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: var(--radius-sm) !important;
+  box-shadow: var(--shadow-lg) !important;
+  backdrop-filter: blur(10px) !important;
+  z-index: var(--z-tooltip) !important;
+}
+
+/* ===== HEADLESS UI OVERRIDES ===== */
+.headlessui-dialog-overlay {
+  background: rgba(0, 0, 0, 0.5) !important;
+  backdrop-filter: blur(4px) !important;
+}
+
+.headlessui-dialog-panel {
+  background: var(--glass-bg) !important;
+  backdrop-filter: blur(20px) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: var(--radius-lg) !important;
+  box-shadow: var(--shadow-xl) !important;
+}
+
+.headlessui-menu-items {
+  background: var(--glass-bg) !important;
+  backdrop-filter: blur(20px) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-lg) !important;
+}
+
+.headlessui-menu-item {
+  color: var(--text-secondary) !important;
+  transition: all var(--transition-fast) !important;
+}
+
+.headlessui-menu-item:hover {
+  background: var(--glass-hover) !important;
+  color: var(--text-primary) !important;
+}
+
+/* ===== REACT HOT TOAST OVERRIDES ===== */
+.react-hot-toast {
+  background: var(--glass-bg) !important;
+  backdrop-filter: blur(20px) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-lg) !important;
+  color: var(--text-primary) !important;
+}
+
+.react-hot-toast-success {
+  border-color: rgba(16, 185, 129, 0.3) !important;
+  box-shadow: var(--shadow-lg), 0 0 10px var(--glow-success) !important;
+}
+
+.react-hot-toast-error {
+  border-color: rgba(239, 68, 68, 0.3) !important;
+  box-shadow: var(--shadow-lg), 0 0 10px var(--glow-danger) !important;
+}
+
+/* ===== SONNER OVERRIDES ===== */
+[data-sonner-toast] {
+  background: var(--glass-bg) !important;
+  backdrop-filter: blur(20px) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-lg) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-sonner-toast][data-type="success"] {
+  border-color: rgba(16, 185, 129, 0.3) !important;
+  box-shadow: var(--shadow-lg), 0 0 10px var(--glow-success) !important;
+}
+
+[data-sonner-toast][data-type="error"] {
+  border-color: rgba(239, 68, 68, 0.3) !important;
+  box-shadow: var(--shadow-lg), 0 0 10px var(--glow-danger) !important;
+}
+
+[data-sonner-toast][data-type="warning"] {
+  border-color: rgba(245, 158, 11, 0.3) !important;
+  box-shadow: var(--shadow-lg), 0 0 10px var(--glow-warning) !important;
+}
+
+/* ===== RECHARTS OVERRIDES ===== */
+.recharts-wrapper {
+  color: var(--text-primary) !important;
+}
+
+.recharts-cartesian-axis-tick-value {
+  fill: var(--text-secondary) !important;
+}
+
+.recharts-legend-item-text {
+  color: var(--text-secondary) !important;
+}
+
+.recharts-tooltip-wrapper {
+  background: var(--glass-bg) !important;
+  backdrop-filter: blur(20px) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-lg) !important;
+}
+
+/* ===== REACT SELECT OVERRIDES ===== */
+.react-select__control {
+  background: var(--glass-bg) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: var(--radius-md) !important;
+  backdrop-filter: blur(10px) !important;
+  min-height: var(--touch-target) !important;
+}
+
+.react-select__control:hover {
+  border-color: var(--accent-primary) !important;
+}
+
+.react-select__control--is-focused {
+  border-color: var(--accent-primary) !important;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1) !important;
+}
+
+.react-select__menu {
+  background: var(--glass-bg) !important;
+  backdrop-filter: blur(20px) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-lg) !important;
+}
+
+.react-select__option {
+  background: transparent !important;
+  color: var(--text-secondary) !important;
+}
+
+.react-select__option:hover {
+  background: var(--glass-hover) !important;
+  color: var(--text-primary) !important;
+}
+
+.react-select__option--is-selected {
+  background: rgba(124, 58, 237, 0.2) !important;
+  color: var(--text-primary) !important;
+}
+
+.react-select__single-value {
+  color: var(--text-primary) !important;
+}
+
+.react-select__placeholder {
+  color: var(--text-muted) !important;
+}
+
+/* ===== REACT DATEPICKER OVERRIDES ===== */
+.react-datepicker {
+  background: var(--glass-bg) !important;
+  backdrop-filter: blur(20px) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-lg) !important;
+  color: var(--text-primary) !important;
+}
+
+.react-datepicker__header {
+  background: rgba(124, 58, 237, 0.1) !important;
+  border-bottom: 1px solid var(--glass-border) !important;
+}
+
+.react-datepicker__day:hover {
+  background: var(--glass-hover) !important;
+  color: var(--text-primary) !important;
+}
+
+.react-datepicker__day--selected {
+  background: var(--accent-primary) !important;
+  color: white !important;
+}
+
+/* ===== CUSTOM SCROLLBAR FOR COMPONENTS ===== */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-sm);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-normal);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, var(--accent-secondary), var(--accent-tertiary));
+  box-shadow: 0 0 10px var(--glow-purple);
+}
+
+/* ===== FOCUS RING OVERRIDES ===== */
+*:focus-visible {
+  outline: 2px solid var(--accent-primary) !important;
+  outline-offset: 2px !important;
+  border-radius: var(--radius-sm) !important;
+}
+
+button:focus-visible,
+[role="button"]:focus-visible {
+  outline-offset: 4px !important;
+}
+
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: none !important;
+  border-color: var(--accent-primary) !important;
+  box-shadow: 
+    0 0 0 3px rgba(124, 58, 237, 0.1),
+    0 0 15px rgba(124, 58, 237, 0.2) !important;
+}

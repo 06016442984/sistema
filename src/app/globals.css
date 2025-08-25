@@ -1,0 +1,386 @@
+/* ========================================
+   KITCHEN MANAGER - MODULAR CSS SYSTEM
+   ======================================== */
+
+/* ===== IMPORTS FIRST (Required by CSS spec) ===== */
+
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+/* Modular CSS Imports - Order is important for proper cascading */
+@import '../styles/variables.css';
+@import '../styles/base.css';
+@import '../styles/components.css';
+@import '../styles/layout.css';
+@import '../styles/utilities.css';
+@import '../styles/animations.css';
+@import '../styles/responsive.css';
+@import '../styles/theme-overrides.css';
+
+/* ===== TAILWIND CSS ===== */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ========================================
+   GLOBAL CONFIGURATION
+   ======================================== */
+
+/* Ensure proper CSS custom property inheritance */
+*,
+*::before,
+*::after {
+  color-scheme: dark;
+}
+
+/* Global focus management */
+html {
+  scroll-padding-top: 2rem;
+}
+
+/* Global text selection */
+::selection {
+  background: var(--accent-primary);
+  color: white;
+  text-shadow: none;
+}
+
+::-moz-selection {
+  background: var(--accent-primary);
+  color: white;
+  text-shadow: none;
+}
+
+/* ========================================
+   BROWSER COMPATIBILITY
+   ======================================== */
+
+/* Safari-specific fixes */
+@supports (-webkit-backdrop-filter: blur(20px)) {
+  .glass-card {
+    -webkit-backdrop-filter: blur(20px);
+  }
+  
+  .sidebar {
+    -webkit-backdrop-filter: blur(20px);
+  }
+  
+  .header {
+    -webkit-backdrop-filter: blur(20px);
+  }
+}
+
+/* Firefox-specific fixes */
+@-moz-document url-prefix() {
+  .glass-card {
+    background: rgba(26, 15, 46, 0.9);
+  }
+  
+  .sidebar {
+    background: rgba(26, 15, 46, 0.95);
+  }
+}
+
+/* Edge/IE compatibility */
+@supports not (backdrop-filter: blur(20px)) {
+  .glass-card {
+    background: rgba(26, 15, 46, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  .sidebar {
+    background: rgba(26, 15, 46, 0.95);
+  }
+  
+  .header {
+    background: rgba(26, 15, 46, 0.9);
+  }
+}
+
+/* iOS Safari fixes */
+@supports (-webkit-touch-callout: none) {
+  .min-h-screen {
+    min-height: -webkit-fill-available;
+  }
+  
+  .sticky {
+    position: -webkit-sticky;
+    position: sticky;
+  }
+  
+  .overflow-auto {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* ========================================
+   ACCESSIBILITY ENHANCEMENTS
+   ======================================== */
+
+/* Improve focus indicators */
+.focus-ring:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* Screen reader improvements */
+.sr-only-focusable:focus {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: inherit;
+  margin: inherit;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+/* High contrast borders for better visibility */
+@media (forced-colors: active) {
+  .glass-card,
+  .btn,
+  .input {
+    border: 1px solid ButtonText;
+  }
+}
+
+/* ========================================
+   PERFORMANCE OPTIMIZATIONS
+   ======================================== */
+
+/* GPU acceleration for smooth animations */
+.gpu-accelerated {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Optimize repaints */
+.optimize-repaint {
+  contain: layout style paint;
+}
+
+/* Lazy loading optimization */
+.lazy-load {
+  content-visibility: auto;
+  contain-intrinsic-size: 200px;
+}
+
+/* ========================================
+   PROGRESSIVE ENHANCEMENT
+   ======================================== */
+
+/* Enhanced styles for modern browsers */
+@supports (display: grid) {
+  .enhanced-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing-lg);
+  }
+}
+
+@supports (backdrop-filter: blur(20px)) {
+  .enhanced-glass {
+    backdrop-filter: blur(20px);
+    background: rgba(255, 255, 255, 0.05);
+  }
+}
+
+/* ========================================
+   UTILITY LAYER EXTENSIONS
+   ======================================== */
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .scrollbar-none {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .aspect-golden {
+    aspect-ratio: 1.618 / 1;
+  }
+  
+  .aspect-video {
+    aspect-ratio: 16 / 9;
+  }
+  
+  .aspect-square {
+    aspect-ratio: 1 / 1;
+  }
+}
+
+/* ========================================
+   COMPONENT LAYER EXTENSIONS
+   ======================================== */
+
+@layer components {
+  .btn-premium-lg {
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    padding: var(--spacing-lg) var(--spacing-xl);
+    font-size: var(--font-size-lg);
+    min-height: var(--touch-target-lg);
+    border-radius: var(--radius-md);
+    color: white;
+    font-weight: var(--font-weight-semibold);
+    transition: all var(--transition-normal);
+  }
+  
+  .card-premium {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-xl);
+  }
+  
+  .input-premium-lg {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    padding: var(--spacing-lg) var(--spacing-xl);
+    font-size: var(--font-size-lg);
+    min-height: var(--touch-target-lg);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    backdrop-filter: blur(10px);
+  }
+}
+
+/* ========================================
+   SAFE AREA SUPPORT
+   ======================================== */
+
+@supports (padding: max(0px)) {
+  .safe-area-inset-top {
+    padding-top: max(var(--spacing-md), env(safe-area-inset-top));
+  }
+  
+  .safe-area-inset-bottom {
+    padding-bottom: max(var(--spacing-md), env(safe-area-inset-bottom));
+  }
+  
+  .safe-area-inset-left {
+    padding-left: max(var(--spacing-md), env(safe-area-inset-left));
+  }
+  
+  .safe-area-inset-right {
+    padding-right: max(var(--spacing-md), env(safe-area-inset-right));
+  }
+}
+
+/* ========================================
+   PRINT OPTIMIZATION
+   ======================================== */
+
+@media print {
+  :root {
+    --bg-primary: white;
+    --bg-secondary: white;
+    --text-primary: black;
+    --text-secondary: #333;
+    --glass-bg: white;
+    --glass-border: #ccc;
+  }
+  
+  .no-print {
+    display: none !important;
+  }
+  
+  .page-break {
+    page-break-before: always;
+  }
+  
+  .avoid-break {
+    page-break-inside: avoid;
+  }
+}
+
+/* ========================================
+   REDUCED MOTION SUPPORT
+   ======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ========================================
+   HIGH CONTRAST SUPPORT
+   ======================================== */
+
+@media (prefers-contrast: high) {
+  :root {
+    --glass-border: rgba(255, 255, 255, 0.3);
+    --text-secondary: #e2e8f0;
+  }
+}
+
+/* ========================================
+   LEGACY BROWSER FALLBACKS
+   ======================================== */
+
+.no-backdrop-filter .glass-card {
+  background: rgba(26, 15, 46, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.no-css-grid .grid {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.no-css-grid .grid > * {
+  flex: 1;
+  min-width: 250px;
+}
+
+/* ========================================
+   CRITICAL STYLES
+   ======================================== */
+
+.critical-above-fold {
+  font-family: var(--font-family-sans);
+  background: linear-gradient(
+    135deg, 
+    var(--bg-primary) 0%, 
+    var(--bg-secondary) 50%, 
+    var(--bg-tertiary) 100%
+  );
+  color: var(--text-primary);
+  min-height: 100vh;
+}
+
+/* ========================================
+   PERFORMANCE MONITORING
+   ======================================== */
+
+.layout-shift-monitor {
+  contain: layout;
+}
+
+.paint-monitor {
+  contain: paint;
+}
+
+.style-monitor {
+  contain: style;
+}
+
+/* End of modular CSS system */
