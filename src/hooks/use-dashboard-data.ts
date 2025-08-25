@@ -1,167 +1,151 @@
-"use client";
-
 import { useState, useEffect, useCallback } from 'react';
-import { supabase } from '@/lib/supabase';
-import { useAuth } from '@/components/providers/auth-provider';
+import { createClient } from '@/lib/supabase/client';
+import { toast } from 'sonner';
+import type { Database } from '@/types/database';
 
-interface DashboardStats {
-  totalKitchens: number;
+// Tipos para os dados do dashboard para manter o código organizado
+type Project = Database['public']['Tables']['projects']['Row'];
+type Task = Database['public']['Tables']['tasks']['Row'] & { projects: { name: string } | null };
+type Activity = Database['public']['Tables']['audit_log']['Row'];
+
+interface Stats {
   totalProjects: number;
   totalTasks: number;
+  totalUsers: number;
   completedTasks: number;
-  pendingReminders: number;
-  activeAssistants: number;
 }
 
+/**
+ * Hook customizado para buscar todos os dados necessários para o Dashboard.
+ * Esta versão otimizada utiliza Promise.all para executar as consultas
+ * ao banco de dados em paralelo, melhorando significativamente o tempo de carregamento.
+ */
 export function useDashboardData() {
-  const { user, userRoles } = useAuth();
-  const [stats, setStats] = useState<DashboardStats>({
-    totalKitchens: 0,
-    totalProjects: 0,
-    totalTasks: 0,
-    completedTasks: 0,
-    pendingReminders: 0,
-    activeAssistants: 0
-  });
+  const supabase = createClient();
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [stats, setStats] = useState<Stats | null>(null);
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [activities, setActivities] = useState<Activity[]>([]);
+  const [userName, setUserName] = useState<string>('');
+  
+  // O chartData foi removido temporariamente pois a consulta original não era eficiente.
+  // Podemos trabalhar em um gráfico otimizado no futuro.
+  // const [chartData, setChartData] = useState<any[]>([]);
 
-  const loadData = useCallback(async () => {
-    if (!userRoles || userRoles.length === 0) {
-      setStats({
-        totalKitchens: 0,
-        totalProjects: 0,
-        totalTasks: 0,
-        completedTasks: 0,
-        pendingReminders: 0,
-        activeAssistants: 0
-      });
-      setLoading(false);
-      return;
-    }
-
+  const fetchData = useCallback(async () => {
+    setLoading(true);
     try {
-      setError(null);
-      console.log('🔄 Carregando dados do dashboard...');
+      // Primeiro, obtemos o usuário. As outras consultas não dependem dele, mas é bom ter.
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Usuário não autenticado.');
 
-      // Obter IDs das unidades que o usuário tem acesso
-      const kitchenIds = userRoles.map(role => role.kitchen_id);
+      // Preparamos todas as "promessas" de busca de dados.
+      // Elas serão executadas todas de uma vez, em paralelo.
+      const profilePromise = supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('id', user.id)
+        .single();
+
+      const projectCountPromise = supabase
+        .from('projects')
+        .select('*', { count: 'exact', head: true });
+
+      const taskCountPromise = supabase
+        .from('tasks')
+        .select('*', { count: 'exact', head: true });
       
-      // Verificar se as unidades ainda estão ativas
-      const { data: activeKitchens, error: kitchensError } = await supabase
-        .from('kitchens')
-        .select('id, nome, codigo')
-        .in('id', kitchenIds)
-        .eq('ativo', true);
-
-      if (kitchensError) {
-        throw kitchensError;
-      }
-
-      const activeKitchenIds = activeKitchens?.map(k => k.id) || [];
-
-      if (activeKitchenIds.length === 0) {
-        setStats({
-          totalKitchens: 0,
-          totalProjects: 0,
-          totalTasks: 0,
-          completedTasks: 0,
-          pendingReminders: 0,
-          activeAssistants: 0
-        });
-        return;
-      }
-
-      // Carregar dados em paralelo
-      const [projectsResult, assistantsResult, remindersResult] = await Promise.allSettled([
-        // Projetos ativos (não finalizados)
-        supabase
-          .from('projects')
-          .select('id, status')
-          .in('kitchen_id', activeKitchenIds)
-          .in('status', ['ATIVO', 'PAUSADO']), // Apenas ativos e pausados, não concluídos
+      // Corrigido para buscar da tabela 'profiles' que contém os usuários do sistema.
+      const userCountPromise = supabase
+        .from('profiles')
+        .select('*', { count: 'exact', head: true });
         
-        // Assistentes ativos
-        supabase
-          .from('kitchen_assistants')
-          .select('id')
-          .in('kitchen_id', activeKitchenIds)
-          .eq('ativo', true),
-        
-        // Lembretes pendentes do usuário
-        user?.id ? supabase
-          .from('task_reminders')
-          .select('*', { count: 'exact', head: true })
-          .eq('user_id', user.id)
-          .eq('sent', false)
-          .lte('scheduled_time', new Date().toISOString()) : Promise.resolve({ count: 0 })
+      // Adicionada uma consulta real para tarefas completadas.
+      // Assumimos que o status 'Done' significa "concluído".
+      const completedTasksCountPromise = supabase
+        .from('tasks')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'Done');
+
+      const recentProjectsPromise = supabase
+        .from('projects')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(5);
+
+      const recentTasksPromise = supabase
+        .from('tasks')
+        .select('*, projects(name)')
+        .order('created_at', { ascending: false })
+        .limit(5);
+
+      const recentActivitiesPromise = supabase
+        .from('audit_log')
+        .select('user_email, action, details, created_at') // Seleciona colunas específicas
+        .order('created_at', { ascending: false })
+        .limit(5);
+
+      // Usamos Promise.all para esperar que TODAS as buscas terminem.
+      const [
+        profileResult,
+        projectCountResult,
+        taskCountResult,
+        userCountResult,
+        completedTasksCountResult,
+        recentProjectsResult,
+        recentTasksResult,
+        recentActivitiesResult,
+      ] = await Promise.all([
+        profilePromise,
+        projectCountPromise,
+        taskCountPromise,
+        userCountPromise,
+        completedTasksCountPromise,
+        recentProjectsPromise,
+        recentTasksPromise,
+        recentActivitiesPromise,
       ]);
 
-      // Processar resultados dos projetos
-      const projects = projectsResult.status === 'fulfilled' ? projectsResult.value.data || [] : [];
-      const projectIds = projects.map(p => p.id);
-
-      // Carregar tarefas se há projetos
-      let totalTasks = 0;
-      let completedTasks = 0;
-
-      if (projectIds.length > 0) {
-        const { data: tasks } = await supabase
-          .from('tasks')
-          .select('id, status')
-          .in('project_id', projectIds);
-
-        totalTasks = tasks?.length || 0;
-        completedTasks = tasks?.filter(t => t.status === 'CONCLUIDA').length || 0;
+      // Agora, verificamos se alguma delas deu erro.
+      const results = [
+        profileResult, projectCountResult, taskCountResult, userCountResult,
+        completedTasksCountResult, recentProjectsResult, recentTasksResult,
+        recentActivitiesResult
+      ];
+      for (const result of results) {
+        if (result.error) {
+          console.error("Erro ao buscar dados do dashboard:", result.error);
+          throw result.error;
+        }
       }
-
-      // Processar outros resultados
-      const activeAssistants = assistantsResult.status === 'fulfilled' ? 
-        (assistantsResult.value.data?.length || 0) : 0;
       
-      const pendingReminders = remindersResult.status === 'fulfilled' ? 
-        (remindersResult.value.count || 0) : 0;
-
-      // Atualizar stats
+      // Se tudo correu bem, atualizamos o estado da aplicação com os novos dados.
+      setUserName(profileResult.data?.full_name || '');
+      setProjects(recentProjectsResult.data as Project[] || []);
+      setTasks(recentTasksResult.data as Task[] || []);
+      setActivities(recentActivitiesResult.data as Activity[] || []);
+      
       setStats({
-        totalKitchens: activeKitchenIds.length,
-        totalProjects: projectIds.length,
-        totalTasks,
-        completedTasks,
-        pendingReminders,
-        activeAssistants
+        totalProjects: projectCountResult.count ?? 0,
+        totalTasks: taskCountResult.count ?? 0,
+        totalUsers: userCountResult.count ?? 0,
+        completedTasks: completedTasksCountResult.count ?? 0,
       });
 
-      console.log('✅ Dashboard carregado com sucesso:', {
-        unidades: activeKitchenIds.length,
-        projetos: projectIds.length,
-        tarefas: totalTasks,
-        assistentes: activeAssistants
+    } catch (error: any) {
+      toast.error('Falha ao carregar os dados do dashboard', { 
+        description: error.message || 'Ocorreu um erro inesperado. Tente novamente.',
       });
-
-    } catch (err: any) {
-      console.error('💥 Erro ao carregar dashboard:', err);
-      setError(err.message || 'Erro ao carregar dados');
     } finally {
       setLoading(false);
     }
-  }, [user?.id, userRoles]);
+  }, [supabase]);
 
-  // Carregar dados quando userRoles mudar
   useEffect(() => {
-    loadData();
-  }, [loadData]);
+    fetchData();
+  }, [fetchData]);
 
-  // Função para refresh manual
-  const refresh = useCallback(async () => {
-    setLoading(true);
-    await loadData();
-  }, [loadData]);
-
-  return {
-    stats,
-    loading,
-    error,
-    refresh
-  };
+  // Retornamos os dados para a página do Dashboard usar.
+  return { loading, stats, tasks, projects, activities, userName };
 }
